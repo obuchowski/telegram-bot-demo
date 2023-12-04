@@ -1,0 +1,31 @@
+service: my-budget-buddy
+frameworkVersion: "3"
+useDotenv: true
+
+provider:
+  name: aws
+#  stage: prod
+  timeout: 10
+  memorySize: 256
+  runtime: nodejs20.x
+  architecture: arm64
+  logRetentionInDays: 60
+  region: eu-central-1
+
+package:
+  excludeDevDependencies: true
+
+functions:
+  MyBudgetBuddyTelegramBot:
+    handler: src/handlers/tg-bot.handler
+    name: my-budget-buddy-tg-bot
+    url: true
+    environment:
+      TELEGRAM_TOKEN: ${env:TELEGRAM_TOKEN}
+    events:
+      - schedule:
+          name: my-budget-buddy-tg-bot-warmer-schedule
+          rate: rate(5 minutes)
+          enabled: false
+          input:
+            warmer: true

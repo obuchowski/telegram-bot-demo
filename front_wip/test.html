@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Budget Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div id="date-filter">
+    <!-- Date Filter -->
+    <input type="date" id="start-date">
+    <input type="date" id="end-date">
+</div>
+
+<div id="left-for-today">
+    <span>Остаток на день</span>
+    <span id="today-amount">-625.66 zł</span>
+</div>
+<div id="left-for-month">
+    <span>Остаток на месяц</span>
+    <span id="month-amount">9,430.30 zł</span>
+</div>
+
+<div id="filters">
+    <!-- Filters -->
+    <select id="category-filter">
+        <option value="all">Категория</option>
+        <!-- Add more category options here -->
+    </select>
+    <select id="subcategory-filter">
+        <option value="all">Подкатегория</option>
+        <!-- Add more subcategory options here -->
+    </select>
+</div>
+
+<div class="chart-container">
+    <canvas id="subcategory-piechart"></canvas>
+</div>
+<div class="chart-container">
+    <canvas id="monthly-spendings-bargraph"></canvas>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

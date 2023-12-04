@@ -1,5 +1,5 @@
-.idea
-.DS_Store
-.netlify
-/node_modules
-/config.json
+.env
+.editorconfig
+.serverless
+.idea/
+node_modules/
