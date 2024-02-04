@@ -4,7 +4,7 @@ useDotenv: true
 
 provider:
   name: aws
-#  stage: prod
+  stage: dev
   timeout: 10
   memorySize: 256
   runtime: nodejs20.x
@@ -12,8 +12,18 @@ provider:
   logRetentionInDays: 60
   region: eu-central-1
 
-package:
-  excludeDevDependencies: true
+custom:
+  minification:
+    dev: false
+    prod: true
+  esbuild:
+    packager: npm
+    bundle: true
+    minify: ${self:custom.minification.${self:provider.stage}}
+    target: node20
+    keepOutputDirectory: true
+    external:
+      - '@aws-sdk'
 
 functions:
   MyBudgetBuddyTelegramBot:
@@ -22,6 +32,8 @@ functions:
     url: true
     environment:
       TELEGRAM_TOKEN: ${env:TELEGRAM_TOKEN}
+      FORM_URL: ${env:FORM_URL}
+      ALLOWED_USERS: ${env:ALLOWED_USERS}
     events:
       - schedule:
           name: my-budget-buddy-tg-bot-warmer-schedule
@@ -29,3 +41,6 @@ functions:
           enabled: false
           input:
             warmer: true
+
+plugins:
+  - serverless-esbuild

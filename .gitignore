@@ -1,5 +1,6 @@
 .env
-.editorconfig
-.serverless
+.editorconfig/
+.serverless/
+.esbuild/
 .idea/
 node_modules/

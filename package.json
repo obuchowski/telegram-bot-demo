@@ -9,10 +9,11 @@
     "deploy": "./node_modules/.bin/sls deploy --config ./serverless.yml --verbose"
   },
   "dependencies": {
-    "sharp": "0.33.0",
     "telegraf": "^4.15.3"
   },
   "devDependencies": {
-    "serverless": "^3.38.0"
+    "esbuild": "^0.19.12",
+    "serverless": "^3.38.0",
+    "serverless-esbuild": "^1.51.0"
   }
 }
