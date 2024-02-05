@@ -1,5 +1,5 @@
 import { Telegraf, Markup, session } from 'telegraf';
-import { message } from 'telegraf/filters'
+import { message } from 'telegraf/filters';
 import submitToGoogleForm from '../utils/submitToGoogleForm';
 import categories from '../utils/categories.json';
 
@@ -17,27 +17,28 @@ bot.use((ctx, next) => {
 });
 bot.use(session());
 
-bot.on('callback_query', async ctx => {
+bot.hears(categories.flat().map(c => c.label), async (ctx) => {
   if (!ctx.session?.amount) {
-    return ctx.reply('Please start by entering your spending.');
+    return ctx.reply('Внеси свою покупку.');
   }
 
-  const category = ctx.callbackQuery.data;
+  const category = ctx.message.text;
   const { amount, comment } = ctx.session;
   ctx.session.amount = ctx.session.comment = undefined;
 
+  // Submit data to Google Form
   const submissionResult = await submitToGoogleForm(amount, category, comment);
-  const replyText = submissionResult
-    ? `Submitted: ${amount}zł for ${category}${comment ? ` - ${comment}` : ''}`
-    : 'Failed to submit';
 
-  const chatId = ctx.callbackQuery.message.chat.id;
-  const messageId = ctx.callbackQuery.message.message_id;
+  try {
+    await ctx.deleteMessage(ctx.message.message_id - 1);
+  } catch (e) {
+    console.error(e);
+  }
 
-  return Promise.all([
-    ctx.telegram.deleteMessage(chatId, messageId),
-    ctx.reply(replyText)
-  ]);
+  const response = submissionResult
+    ? `Внесено ${amount}zł за ${category}${comment ? ` - ${comment}` : ''}`
+    : 'Не удалось внести';
+  return ctx.reply(response);
 });
 
 bot.on(message('text'), (ctx) => {
@@ -46,19 +47,15 @@ bot.on(message('text'), (ctx) => {
   const comment = commentParts.join(' ');
 
   if (isNaN(amount)) {
-    ctx.reply('Please send a message in the format "number comment"');
+    ctx.reply('Ожидаемый формат сообщения: "число [комментарий]"');
     return;
   }
 
-  // Save amount and comment in the session and proceed to category selection
   ctx.session ??= {};
   ctx.session.amount = amount;
   ctx.session.comment = comment;
 
-  return ctx.reply(
-    'Select Category',
-    Markup.inlineKeyboard(categories.map(row => row.map(c => ({ text: c.label, callback_data: c.label }))))
-  );
+  return ctx.reply('Категория:', Markup.keyboard(categories.map(row => row.map(c => c.label))).oneTime());
 });
 
 export const handler = async (event) => {
