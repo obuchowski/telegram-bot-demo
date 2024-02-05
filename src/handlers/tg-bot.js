@@ -18,7 +18,11 @@ bot.use((ctx, next) => {
 bot.use(session());
 
 bot.hears(categories.flat().map(c => c.label), async (ctx) => {
+  console.log('Category handler');
+  console.log(ctx);
+
   if (!ctx.session?.amount) {
+    console.log('No session amount');
     return ctx.reply('Внеси свою покупку.');
   }
 
@@ -42,9 +46,11 @@ bot.hears(categories.flat().map(c => c.label), async (ctx) => {
 });
 
 bot.on(message('text'), (ctx) => {
+  console.log('Text handler');
+  console.log(ctx);
+
   const text = ctx.message.text;
-  const [amount, ...commentParts] = text.split(' ');
-  const comment = commentParts.join(' ');
+  const [amount, ...comment] = text.split(' ');
 
   if (isNaN(amount)) {
     ctx.reply('Ожидаемый формат сообщения: "число [комментарий]"');
@@ -53,7 +59,7 @@ bot.on(message('text'), (ctx) => {
 
   ctx.session ??= {};
   ctx.session.amount = amount;
-  ctx.session.comment = comment;
+  ctx.session.comment = comment.join(' ');
 
   return ctx.reply('Категория:', Markup.keyboard(categories.map(row => row.map(c => c.label))).oneTime());
 });
