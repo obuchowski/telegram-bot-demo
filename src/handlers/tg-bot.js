@@ -18,8 +18,7 @@ bot.use((ctx, next) => {
 bot.use(session());
 
 bot.hears(categories.flat().map(c => c.label), async (ctx) => {
-  console.log('Category handler');
-  console.log(ctx);
+  console.log('[Category Handler]', JSON.stringify({ ...ctx, telegram: undefined }, null, 2));
 
   if (!ctx.session?.amount) {
     console.log('No session amount');
@@ -46,8 +45,7 @@ bot.hears(categories.flat().map(c => c.label), async (ctx) => {
 });
 
 bot.on(message('text'), (ctx) => {
-  console.log('Text handler');
-  console.log(ctx);
+  console.log('[Text Handler]', JSON.stringify({ ...ctx, telegram: undefined }, null, 2));
 
   const text = ctx.message.text;
   const [amount, ...comment] = text.split(' ');
