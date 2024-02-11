@@ -1,9 +1,10 @@
 import categories from './categories.json';
 
-export default async function submitToGoogleForm(amount, categoryLabel, comment) {
+export default async function submitToGoogleForm(amount, categoryLabel, comment, user) {
   const params = {
     'entry.227094824': 'Расход',
     'entry.2094389336': amount,
+    'entry.1033955728': user,
 
     // 'entry.1364109338': '__other_option__',
     // 'entry.1364109338.other_option_response': 'Salary',

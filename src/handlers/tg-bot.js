@@ -26,11 +26,12 @@ bot.hears(categories.flat().map(c => c.label), async (ctx) => {
   }
 
   const category = ctx.message.text;
+  const user = ctx.message.from.first_name;
   const { amount, comment } = ctx.session;
   ctx.session.amount = ctx.session.comment = undefined;
 
   // Submit data to Google Form
-  const submissionResult = await submitToGoogleForm(amount, category, comment);
+  const submissionResult = await submitToGoogleForm(amount, category, comment, user);
 
   try {
     await ctx.deleteMessage(ctx.message.message_id - 1);
@@ -48,7 +49,8 @@ bot.on(message('text'), (ctx) => {
   console.log('[Text Handler]', JSON.stringify({ ...ctx, telegram: undefined }, null, 2));
 
   const text = ctx.message.text;
-  const [amount, ...comment] = text.split(' ');
+  let [amount, ...comment] = text.split(' ');
+  amount = amount.replace(',', '.');
 
   if (isNaN(amount)) {
     ctx.reply('Ожидаемый формат сообщения: "число [комментарий]"');
